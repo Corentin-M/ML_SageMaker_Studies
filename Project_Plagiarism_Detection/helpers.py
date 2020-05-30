@@ -1,6 +1,7 @@
 import re
 import pandas as pd
-import operator 
+import operator
+import numpy as np
 
 # Add 'datatype' column that indicates if the record is original wiki answer as 0, training data 1, test data 2, onto 
 # the dataframe - uses stratified random sampling (with seed) to sample by task & plagiarism amount 
@@ -110,3 +111,17 @@ def create_text_column(df, file_directory='data/'):
     text_df['Text'] = text
     
     return text_df
+
+
+
+def containment(ngram_array):
+    ''' Containment is a measure of text similarity. It is the normalized, 
+       intersection of ngram word counts in two texts.
+       :param ngram_array: an array of ngram counts for an answer and source text.
+       :return: a normalized containment value.'''
+
+    nrows, ncols = ngram_array.shape
+    intersection = 0
+    for i in range(0,ncols):
+        intersection += min(ngram_array[0,i], ngram_array[1,i])
+    return intersection / ngram_array[0].sum()
